@@ -1,0 +1,1313 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="NeuStock">
+<meta name="theme-color" content="#080809">
+<meta name="description" content="Gestion de stock serrurerie automobile">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect fill='%23080809' width='180' height='180' rx='40'/%3E%3Crect fill='%23d4a84b' x='30' y='75' width='120' height='8' rx='4'/%3E%3Crect fill='%23d4a84b' x='30' y='95' width='80' height='8' rx='4'/%3E%3Crect fill='%23d4a84b' x='30' y='55' width='60' height='8' rx='4'/%3E%3Ccircle fill='none' stroke='%23d4a84b' stroke-width='6' cx='130' cy='115' r='22'/%3E%3Cline stroke='%23d4a84b' stroke-width='6' stroke-linecap='round' x1='130' y1='106' x2='130' y2='124'/%3E%3Cline stroke='%23d4a84b' stroke-width='6' stroke-linecap='round' x1='121' y1='115' x2='139' y2='115'/%3E%3C/svg%3E">
+<title>NeuAutoStock</title>
+
+<style>
+/* ═══════════════════════════════════════════════
+   DESIGN SYSTEM — Dark Vault Premium
+═══════════════════════════════════════════════ */
+:root {
+  /* Surfaces */
+  --s0: #080809;
+  --s1: #0d0d0f;
+  --s2: #111114;
+  --s3: #17171b;
+  --s4: #1e1e23;
+  --s5: #26262d;
+  --glass: rgba(13,13,15,0.88);
+
+  /* Borders */
+  --b1: rgba(255,255,255,0.04);
+  --b2: rgba(255,255,255,0.08);
+  --b3: rgba(255,255,255,0.14);
+  --b4: rgba(255,255,255,0.24);
+
+  /* Text */
+  --t1: #f0f0f2;
+  --t2: #9898a6;
+  --t3: #55555f;
+  --t4: #35353d;
+
+  /* Accent Gold */
+  --gold: #d4a84b;
+  --gold-l: #e8bf6e;
+  --gold-d: #a07830;
+  --gold-g: rgba(212,168,75,0.12);
+  --gold-g2: rgba(212,168,75,0.06);
+
+  /* Status */
+  --red: #f04040;
+  --red-g: rgba(240,64,64,0.1);
+  --green: #30c060;
+  --green-g: rgba(48,192,96,0.1);
+  --blue: #4488ff;
+  --blue-g: rgba(68,136,255,0.1);
+  --amber: #f09020;
+  --amber-g: rgba(240,144,32,0.1);
+  --purple: #9060f0;
+  --purple-g: rgba(144,96,240,0.1);
+  --teal: #20b8a0;
+  --teal-g: rgba(32,184,160,0.1);
+
+  /* Radii */
+  --r1: 6px; --r2: 10px; --r3: 14px; --r4: 18px; --r5: 24px; --r6: 32px;
+
+  /* Safe areas */
+  --sat: env(safe-area-inset-top);
+  --sab: env(safe-area-inset-bottom);
+  --sal: env(safe-area-inset-left);
+  --sar: env(safe-area-inset-right);
+
+  /* Font stacks */
+  --mono: 'SF Mono','Fira Code','Consolas','Courier New',monospace;
+  --sans: -apple-system,BlinkMacSystemFont,'SF Pro Display','SF Pro Text','Helvetica Neue',sans-serif;
+
+  /* Shadows */
+  --sh1: 0 1px 3px rgba(0,0,0,0.4);
+  --sh2: 0 4px 16px rgba(0,0,0,0.5);
+  --sh3: 0 8px 32px rgba(0,0,0,0.6);
+  --sh-gold: 0 0 20px rgba(212,168,75,0.2);
+}
+
+/* ═══ RESET ═══ */
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;-webkit-touch-callout:none;}
+html,body{background:var(--s0);color:var(--t1);font-family:var(--sans);height:100%;overscroll-behavior:none;overflow-x:hidden;}
+body{padding-top:var(--sat);padding-bottom:var(--sab);padding-left:var(--sal);padding-right:var(--sar);}
+button{font-family:inherit;cursor:pointer;}
+input,select,textarea{font-family:inherit;}
+::selection{background:var(--gold-g);color:var(--gold);}
+
+/* ═══ SCROLLBAR ═══ */
+::-webkit-scrollbar{width:3px;height:3px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:var(--b3);border-radius:2px;}
+
+/* ═══════════════════════════════════════════════
+   HEADER
+═══════════════════════════════════════════════ */
+.header {
+  position: sticky; top: 0; z-index: 100;
+  background: var(--glass);
+  backdrop-filter: blur(32px) saturate(200%);
+  -webkit-backdrop-filter: blur(32px) saturate(200%);
+  border-bottom: 1px solid var(--b2);
+}
+
+.header-inner {
+  padding: 14px 16px 0;
+}
+
+.header-row1 {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+/* Brand */
+.brand { display: flex; align-items: center; gap: 11px; }
+.brand-mark {
+  position: relative;
+  width: 38px; height: 38px;
+  background: linear-gradient(135deg, var(--gold), var(--gold-d));
+  border-radius: var(--r2);
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: var(--sh-gold);
+  flex-shrink: 0;
+}
+.brand-mark::after {
+  content: '';
+  position: absolute; inset: 0;
+  border-radius: var(--r2);
+  background: linear-gradient(135deg, rgba(255,255,255,0.15), transparent);
+  pointer-events: none;
+}
+.brand-mark svg { width: 20px; height: 20px; color: var(--s0); }
+.brand-info {}
+.brand-name { font-size: 17px; font-weight: 700; letter-spacing: -0.4px; color: var(--t1); line-height: 1.1; }
+.brand-sub { font-size: 9.5px; color: var(--t3); text-transform: uppercase; letter-spacing: 1.8px; margin-top: 1px; }
+
+/* Header actions */
+.hdr-actions { display: flex; gap: 7px; align-items: center; }
+
+.hdr-btn {
+  width: 36px; height: 36px; border-radius: var(--r2);
+  background: var(--s3); border: 1px solid var(--b2);
+  color: var(--t2); display: flex; align-items: center; justify-content: center;
+  font-size: 15px; transition: all .15s; flex-shrink: 0;
+}
+.hdr-btn:active { background: var(--s4); transform: scale(0.93); }
+.hdr-btn svg { width: 16px; height: 16px; }
+
+.hdr-btn-primary {
+  background: var(--gold); color: var(--s0);
+  border-color: var(--gold); font-size: 13px;
+  font-weight: 700; padding: 0 14px; width: auto;
+  gap: 5px; white-space: nowrap;
+  box-shadow: 0 2px 10px var(--gold-g);
+}
+.hdr-btn-primary:active { background: var(--gold-l); transform: scale(0.96); }
+.hdr-btn-primary svg { width: 13px; height: 13px; }
+
+/* Search */
+.search-wrap { position: relative; margin-bottom: 12px; }
+.search-icon { position: absolute; left: 13px; top: 50%; transform: translateY(-50%); color: var(--t3); pointer-events: none; }
+.search-icon svg { width: 16px; height: 16px; display: block; }
+.search-input {
+  width: 100%; background: var(--s2); border: 1px solid var(--b2);
+  border-radius: var(--r3); color: var(--t1); font-size: 15px;
+  padding: 11px 40px 11px 40px; outline: none; -webkit-appearance: none;
+  transition: border-color .2s, box-shadow .2s;
+}
+.search-input::placeholder { color: var(--t3); }
+.search-input:focus { border-color: var(--gold); box-shadow: 0 0 0 3px var(--gold-g2); }
+.search-clear {
+  position: absolute; right: 8px; top: 50%; transform: translateY(-50%);
+  background: var(--s4); border: none; color: var(--t2);
+  width: 26px; height: 26px; border-radius: 50%;
+  font-size: 12px; display: flex; align-items: center; justify-content: center;
+  opacity: 0; pointer-events: none; transition: opacity .15s;
+}
+.search-wrap.has-value .search-clear { opacity: 1; pointer-events: auto; }
+
+/* Tabs */
+.tabs-wrap { overflow-x: auto; scrollbar-width: none; margin: 0 -16px; padding: 0 16px; }
+.tabs-wrap::-webkit-scrollbar { display: none; }
+.tabs { display: flex; gap: 6px; padding-bottom: 12px; }
+
+.tab {
+  white-space: nowrap; padding: 7px 14px; border-radius: var(--r6);
+  border: 1px solid var(--b2); background: var(--s2);
+  color: var(--t2); font-size: 12.5px; font-weight: 500;
+  flex-shrink: 0; transition: all .2s;
+  display: flex; align-items: center; gap: 6px;
+}
+.tab:active { transform: scale(0.95); }
+.tab.active {
+  background: var(--gold); color: var(--s0);
+  border-color: var(--gold); font-weight: 700;
+  box-shadow: 0 2px 10px var(--gold-g);
+}
+.tab .badge {
+  font-size: 10px; font-weight: 700;
+  background: rgba(0,0,0,0.2); padding: 1px 6px;
+  border-radius: 8px; min-width: 18px; text-align: center;
+}
+.tab.active .badge { background: rgba(0,0,0,0.25); }
+.tab.tab-alert { border-color: rgba(240,64,64,0.3); color: var(--red); background: var(--red-g); }
+.tab.tab-alert.active { background: var(--red); color: white; border-color: var(--red); }
+
+/* ═══════════════════════════════════════════════
+   STATS STRIP
+═══════════════════════════════════════════════ */
+.stats-strip {
+  display: flex; gap: 8px; padding: 10px 16px;
+  overflow-x: auto; scrollbar-width: none;
+  background: var(--s1); border-bottom: 1px solid var(--b1);
+}
+.stats-strip::-webkit-scrollbar { display: none; }
+
+.stat-pill {
+  background: var(--s2); border: 1px solid var(--b2);
+  border-radius: var(--r3); padding: 9px 13px;
+  flex-shrink: 0; display: flex; flex-direction: column; align-items: center;
+  min-width: 62px; position: relative; overflow: hidden;
+}
+.stat-pill::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold-g), transparent);
+}
+.stat-val {
+  font-family: var(--mono); font-size: 19px; font-weight: 700;
+  color: var(--green); line-height: 1;
+}
+.stat-val.alert { color: var(--red); }
+.stat-val.neutral { color: var(--gold); }
+.stat-lbl { font-size: 9px; font-weight: 600; color: var(--t3); text-transform: uppercase; letter-spacing: 0.8px; margin-top: 3px; }
+
+/* ═══════════════════════════════════════════════
+   QUICK GRID
+═══════════════════════════════════════════════ */
+.quick-section {
+  background: var(--s1);
+  border-bottom: 1px solid var(--b1);
+  overflow: hidden;
+  max-height: 220px;
+  transition: max-height .35s cubic-bezier(0.4,0,0.2,1);
+}
+.quick-section.collapsed { max-height: 44px; }
+
+.quick-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 11px 16px; cursor: pointer; user-select: none;
+}
+.quick-label {
+  font-size: 10.5px; font-weight: 700; color: var(--t3);
+  text-transform: uppercase; letter-spacing: 1.4px;
+  display: flex; align-items: center; gap: 7px;
+}
+.quick-label svg { color: var(--gold); width: 13px; height: 13px; }
+.quick-chevron {
+  background: none; border: none; color: var(--t3);
+  display: flex; align-items: center; transition: transform .35s cubic-bezier(0.4,0,0.2,1);
+}
+.quick-chevron svg { width: 18px; height: 18px; }
+.quick-section.collapsed .quick-chevron { transform: rotate(180deg); }
+
+.quick-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(68px, 1fr));
+  gap: 5px; padding: 0 12px 12px;
+  max-height: 168px; overflow-y: auto;
+}
+.qref {
+  background: var(--s2); border: 1px solid var(--b2);
+  border-radius: var(--r2); padding: 7px 5px;
+  text-align: center; cursor: pointer;
+  transition: all .12s; position: relative;
+}
+.qref:active { transform: scale(0.94); }
+.qref.ok { border-color: rgba(48,192,96,0.25); }
+.qref.low { border-color: rgba(240,64,64,0.4); background: var(--red-g); }
+.qref.empty { opacity: 0.38; }
+.qref-ref { font-family: var(--mono); font-size: 9px; font-weight: 600; color: var(--gold); margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.qref-qty { font-family: var(--mono); font-size: 15px; font-weight: 700; color: var(--t1); }
+.qref.low .qref-qty { color: var(--red); }
+.qref.empty .qref-qty { color: var(--t4); }
+.qref-dot { position: absolute; top: 3px; right: 3px; width: 5px; height: 5px; border-radius: 50%; background: var(--red); animation: blink 1.4s ease infinite; }
+@keyframes blink { 0%,100%{opacity:1;} 50%{opacity:0.3;} }
+
+/* ═══════════════════════════════════════════════
+   MAIN CONTENT
+═══════════════════════════════════════════════ */
+.main { padding: 0 12px 110px; }
+
+.group-hdr {
+  display: flex; align-items: center; gap: 10px;
+  padding: 18px 4px 9px;
+}
+.group-hdr-line { flex: 1; height: 1px; background: linear-gradient(90deg, var(--b3), transparent); }
+.group-hdr-label { font-size: 10px; font-weight: 800; color: var(--t3); text-transform: uppercase; letter-spacing: 2px; }
+.group-hdr-count { background: var(--s3); padding: 2px 7px; border-radius: 8px; font-size: 9.5px; font-weight: 700; color: var(--t2); }
+
+.cards { display: grid; grid-template-columns: repeat(2, 1fr); gap: 9px; }
+
+/* ═══ CARD ═══ */
+.card {
+  background: var(--s2);
+  border: 1px solid var(--b2);
+  border-radius: var(--r3);
+  padding: 13px;
+  position: relative;
+  display: flex; flex-direction: column; gap: 5px;
+  transition: border-color .2s, transform .12s;
+  overflow: hidden;
+}
+.card::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--b3), transparent);
+}
+.card:active { transform: scale(0.975); }
+.card.low {
+  border-color: rgba(240,64,64,0.35);
+  background: linear-gradient(160deg, var(--s2), rgba(240,64,64,0.06));
+}
+.card.empty { opacity: 0.45; }
+
+.card-alert-dot {
+  position: absolute; top: 9px; right: 9px;
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--red); box-shadow: 0 0 6px var(--red);
+  animation: blink 1.4s ease infinite;
+}
+.card-ref { font-family: var(--mono); font-size: 11px; font-weight: 700; color: var(--gold); letter-spacing: 0.5px; }
+.card-name { font-size: 13px; font-weight: 600; color: var(--t1); line-height: 1.25; }
+.card-compat { font-size: 10.5px; color: var(--t2); line-height: 1.4; flex: 1; }
+
+.cat-tag {
+  display: inline-flex; align-items: center; gap: 4px;
+  font-size: 9.5px; font-weight: 700; padding: 3px 8px;
+  border-radius: var(--r1); width: fit-content;
+  text-transform: uppercase; letter-spacing: 0.5px;
+}
+
+.qty-block {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-top: 6px; padding-top: 9px;
+  border-top: 1px solid var(--b1);
+}
+.qty-btns { display: flex; align-items: center; gap: 10px; }
+.qty-btn {
+  width: 34px; height: 34px; border-radius: 50%;
+  background: var(--s3); border: 1px solid var(--b3);
+  color: var(--t1); font-size: 17px; font-weight: 400;
+  display: flex; align-items: center; justify-content: center;
+  transition: all .12s; user-select: none;
+}
+.qty-btn:active { background: var(--gold); color: var(--s0); border-color: var(--gold); transform: scale(0.88); }
+.qty-num {
+  font-family: var(--mono); font-size: 21px; font-weight: 700;
+  min-width: 30px; text-align: center;
+}
+.qty-num.ok { color: var(--green); }
+.qty-num.low { color: var(--red); }
+.qty-num.empty { color: var(--t4); }
+
+.card-btns { display: flex; gap: 5px; margin-top: 4px; }
+.card-btn {
+  flex: 1; padding: 7px 0; border-radius: var(--r1);
+  border: 1px solid var(--b2); background: var(--s3);
+  color: var(--t2); font-size: 10.5px; font-weight: 600;
+  transition: all .12s;
+}
+.card-btn:active { background: var(--s4); }
+.card-btn.del { color: var(--red); border-color: rgba(240,64,64,0.25); }
+.card-btn.del:active { background: var(--red-g); }
+
+/* Empty state */
+.empty-state {
+  grid-column: 1/-1; text-align: center; padding: 64px 24px;
+}
+.empty-ico {
+  width: 60px; height: 60px; margin: 0 auto 16px;
+  background: var(--s3); border-radius: 50%;
+  display: flex; align-items: center; justify-content: center; color: var(--t4);
+}
+.empty-ico svg { width: 28px; height: 28px; }
+.empty-title { font-size: 15px; font-weight: 600; color: var(--t2); margin-bottom: 5px; }
+.empty-sub { font-size: 12px; color: var(--t3); }
+
+/* ═══════════════════════════════════════════════
+   MODAL SYSTEM
+═══════════════════════════════════════════════ */
+.overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.72);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  z-index: 200;
+  display: flex; align-items: flex-end;
+  animation: fade-in .18s ease;
+}
+@keyframes fade-in { from{opacity:0;} to{opacity:1;} }
+
+.sheet {
+  background: var(--s2);
+  border-radius: var(--r5) var(--r5) 0 0;
+  width: 100%; max-height: 92vh; overflow-y: auto;
+  padding: 0 20px calc(20px + var(--sab));
+  border-top: 1px solid var(--b3);
+  animation: slide-up .28s cubic-bezier(0.32,0.72,0,1);
+}
+@keyframes slide-up { from{transform:translateY(100%);} to{transform:translateY(0);} }
+
+.sheet-handle {
+  width: 36px; height: 4px; border-radius: 2px;
+  background: var(--b4); margin: 14px auto 18px;
+}
+.sheet-title {
+  font-size: 19px; font-weight: 700;
+  text-align: center; margin-bottom: 22px;
+  background: linear-gradient(135deg, var(--t1), var(--t2));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+}
+
+/* Form elements */
+.field { margin-bottom: 15px; }
+.field-label {
+  display: block; font-size: 11px; font-weight: 700;
+  color: var(--t3); text-transform: uppercase;
+  letter-spacing: 0.8px; margin-bottom: 7px;
+}
+.field-input, .field-select, .field-textarea {
+  width: 100%; background: var(--s3); border: 1px solid var(--b3);
+  border-radius: var(--r2); color: var(--t1); font-size: 15px;
+  padding: 13px 15px; outline: none; -webkit-appearance: none;
+  transition: border-color .18s, box-shadow .18s;
+}
+.field-input:focus, .field-select:focus, .field-textarea:focus {
+  border-color: var(--gold); box-shadow: 0 0 0 3px var(--gold-g2);
+}
+.field-input::placeholder, .field-textarea::placeholder { color: var(--t3); }
+.field-textarea { height: 76px; resize: none; line-height: 1.5; }
+.field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+.sheet-btns { display: flex; gap: 10px; margin-top: 22px; }
+.sheet-btn {
+  flex: 1; padding: 15px; border-radius: var(--r3); border: none;
+  font-size: 15px; font-weight: 700; transition: all .13s;
+}
+.sheet-btn:active { transform: scale(0.97); }
+.sheet-btn.cancel { background: var(--s3); color: var(--t2); }
+.sheet-btn.confirm { background: var(--gold); color: var(--s0); box-shadow: 0 3px 14px var(--gold-g); }
+.sheet-btn.danger-btn { background: var(--red); color: white; }
+
+/* Category color picker */
+.color-picker { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 6px; }
+.color-dot {
+  width: 30px; height: 30px; border-radius: 50%;
+  border: 2px solid transparent; cursor: pointer;
+  transition: all .14s; display: flex; align-items: center; justify-content: center;
+}
+.color-dot.selected { border-color: white; transform: scale(1.15); }
+.color-dot svg { width: 14px; height: 14px; color: rgba(0,0,0,0.6); opacity: 0; }
+.color-dot.selected svg { opacity: 1; }
+
+/* Category list in manager */
+.cat-list-item {
+  display: flex; align-items: center; gap: 12px;
+  padding: 13px 0; border-bottom: 1px solid var(--b1);
+}
+.cat-list-item:last-child { border-bottom: none; }
+.cat-list-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+.cat-list-icon { font-size: 18px; flex-shrink: 0; }
+.cat-list-name { flex: 1; font-size: 14px; font-weight: 600; color: var(--t1); }
+.cat-list-count { font-size: 11px; color: var(--t3); font-family: var(--mono); }
+.cat-del-btn {
+  background: none; border: none; color: var(--t3);
+  width: 32px; height: 32px; border-radius: var(--r1);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px; transition: all .12s;
+}
+.cat-del-btn:active { background: var(--red-g); color: var(--red); }
+
+/* ═══════════════════════════════════════════════
+   TOAST
+═══════════════════════════════════════════════ */
+.toast {
+  position: fixed;
+  bottom: calc(20px + var(--sab)); left: 50%;
+  transform: translateX(-50%) translateY(80px);
+  background: var(--s4);
+  border: 1px solid var(--b3);
+  border-radius: var(--r6);
+  padding: 11px 22px;
+  font-size: 13.5px; font-weight: 600;
+  z-index: 400; opacity: 0; pointer-events: none;
+  transition: transform .25s cubic-bezier(0.32,0.72,0,1), opacity .25s ease;
+  box-shadow: var(--sh3); white-space: nowrap;
+  display: flex; align-items: center; gap: 8px;
+}
+.toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+.toast.ok { border-color: rgba(48,192,96,0.4); }
+.toast.ok::before { content: '✓'; color: var(--green); }
+.toast.err { border-color: rgba(240,64,64,0.4); }
+.toast.err::before { content: '✕'; color: var(--red); }
+.toast.info::before { content: 'ℹ'; color: var(--gold); }
+
+/* ═══════════════════════════════════════════════
+   PWA INSTALL BANNER
+═══════════════════════════════════════════════ */
+.install-banner {
+  background: linear-gradient(135deg, var(--s3), var(--s4));
+  border-bottom: 1px solid var(--b2);
+  padding: 12px 16px;
+  display: flex; align-items: flex-start; gap: 12px;
+}
+.install-ico {
+  width: 40px; height: 40px; border-radius: 10px;
+  background: linear-gradient(135deg, var(--gold), var(--gold-d));
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; box-shadow: var(--sh-gold);
+}
+.install-ico svg { width: 20px; height: 20px; color: var(--s0); }
+.install-text { flex: 1; }
+.install-title { font-size: 13px; font-weight: 700; color: var(--t1); margin-bottom: 2px; }
+.install-sub { font-size: 11px; color: var(--t2); line-height: 1.4; }
+.install-close {
+  background: none; border: none; color: var(--t3);
+  font-size: 18px; padding: 0 4px; flex-shrink: 0;
+  margin-top: -2px;
+}
+
+/* ═══ UTILS ═══ */
+.hidden { display: none !important; }
+
+@media(max-width:374px) { .cards{grid-template-columns:1fr;} }
+@media(min-width:480px) { .cards{grid-template-columns:repeat(3,1fr);} }
+@media(min-width:768px) { .cards{grid-template-columns:repeat(4,1fr);} }
+</style>
+</head>
+<body>
+
+<!-- INSTALL BANNER (iOS only, shown once) -->
+<div id="installBanner" class="install-banner hidden">
+  <div class="install-ico">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L12 15M12 15L8 11M12 15L16 11"/><rect x="3" y="17" width="18" height="4" rx="2"/></svg>
+  </div>
+  <div class="install-text">
+    <div class="install-title">Installer comme une vraie app</div>
+    <div class="install-sub">Appuie sur <strong>Partager</strong> → <strong>"Sur l'écran d'accueil"</strong> pour une sauvegarde permanente</div>
+  </div>
+  <button class="install-close" onclick="dismissBanner()">✕</button>
+</div>
+
+<!-- HEADER -->
+<header class="header">
+  <div class="header-inner">
+    <div class="header-row1">
+      <div class="brand">
+        <div class="brand-mark">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+            <polyline points="3.27 6.96 12 12.01 20.73 6.96"/>
+            <line x1="12" y1="22.08" x2="12" y2="12"/>
+          </svg>
+        </div>
+        <div class="brand-info">
+          <div class="brand-name">NeuAutoStock</div>
+          <div class="brand-sub">Serrurerie Auto</div>
+        </div>
+      </div>
+      <div class="hdr-actions">
+        <button class="hdr-btn" onclick="openCatManager()" title="Catégories">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 1.79 11.79l-1.79-1.79a7.5 7.5 0 0 0-1.48-8.52z"/><path d="M4.93 19.07A10 10 0 0 1 4.93 4.93"/></svg>
+        </button>
+        <button class="hdr-btn" onclick="openImport()" title="Charger">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+        </button>
+        <button class="hdr-btn" onclick="exportData()" title="Sauvegarder">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        </button>
+        <button class="hdr-btn hdr-btn-primary" onclick="openAddItem()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Ajouter
+        </button>
+      </div>
+    </div>
+
+    <div class="search-wrap" id="searchWrap">
+      <span class="search-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></span>
+      <input type="text" class="search-input" id="searchInput" placeholder="Référence, marque, modèle…" autocorrect="off" autocapitalize="off" spellcheck="false">
+      <button class="search-clear" onclick="clearSearch()">✕</button>
+    </div>
+
+    <div class="tabs-wrap">
+      <div class="tabs" id="tabs"></div>
+    </div>
+  </div>
+</header>
+
+<!-- STATS -->
+<div class="stats-strip" id="statsStrip"></div>
+
+<!-- QUICK VIEW -->
+<section class="quick-section" id="quickSection">
+  <div class="quick-header" onclick="toggleQuick()">
+    <span class="quick-label">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+      Vue rapide
+    </span>
+    <button class="quick-chevron">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="18 15 12 9 6 15"/></svg>
+    </button>
+  </div>
+  <div class="quick-grid" id="quickGrid"></div>
+</section>
+
+<!-- MAIN -->
+<main class="main" id="main"></main>
+
+<!-- ═══ MODALS ═══ -->
+
+<!-- Add/Edit Item -->
+<div class="overlay hidden" id="itemOverlay" onclick="closeItemSheet(event)">
+  <div class="sheet" onclick="event.stopPropagation()">
+    <div class="sheet-handle"></div>
+    <h2 class="sheet-title" id="itemSheetTitle">Nouvel article</h2>
+    <div class="field">
+      <label class="field-label">Référence *</label>
+      <input type="text" class="field-input" id="fRef" placeholder="ex: HU66, CR2032…" autocorrect="off" autocapitalize="characters">
+    </div>
+    <div class="field">
+      <label class="field-label">Désignation</label>
+      <input type="text" class="field-input" id="fName" placeholder="ex: Lame HU66 VAG" autocorrect="off">
+    </div>
+    <div class="field">
+      <label class="field-label">Catégorie</label>
+      <select class="field-select" id="fCat"></select>
+    </div>
+    <div class="field">
+      <label class="field-label">Compatibilités / Notes</label>
+      <textarea class="field-textarea" id="fCompat" placeholder="ex: VW Golf IV-VII, Audi A3, Seat, Skoda…"></textarea>
+    </div>
+    <div class="field-row">
+      <div class="field">
+        <label class="field-label">Quantité</label>
+        <input type="number" class="field-input" id="fQty" min="0" value="1" inputmode="numeric">
+      </div>
+      <div class="field">
+        <label class="field-label">Seuil alerte</label>
+        <input type="number" class="field-input" id="fSeuil" min="0" value="2" inputmode="numeric">
+      </div>
+    </div>
+    <div class="sheet-btns">
+      <button class="sheet-btn cancel" onclick="closeItemSheet()">Annuler</button>
+      <button class="sheet-btn confirm" onclick="saveItem()">Enregistrer</button>
+    </div>
+  </div>
+</div>
+
+<!-- Category Manager -->
+<div class="overlay hidden" id="catOverlay" onclick="closeCatSheet(event)">
+  <div class="sheet" onclick="event.stopPropagation()">
+    <div class="sheet-handle"></div>
+    <h2 class="sheet-title">Catégories</h2>
+    <div id="catList"></div>
+    <div class="sheet-btns" style="margin-top:16px">
+      <button class="sheet-btn confirm" onclick="openAddCat()">+ Nouvelle catégorie</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add Category -->
+<div class="overlay hidden" id="addCatOverlay" onclick="closeAddCat(event)">
+  <div class="sheet" onclick="event.stopPropagation()">
+    <div class="sheet-handle"></div>
+    <h2 class="sheet-title">Nouvelle catégorie</h2>
+    <div class="field">
+      <label class="field-label">Nom</label>
+      <input type="text" class="field-input" id="catName" placeholder="ex: Antidémarrage" autocorrect="off">
+    </div>
+    <div class="field">
+      <label class="field-label">Emoji / Icône</label>
+      <input type="text" class="field-input" id="catIcon" placeholder="ex: 🔒" maxlength="4">
+    </div>
+    <div class="field">
+      <label class="field-label">Couleur</label>
+      <div class="color-picker" id="colorPicker"></div>
+    </div>
+    <div class="sheet-btns">
+      <button class="sheet-btn cancel" onclick="closeAddCat()">Annuler</button>
+      <button class="sheet-btn confirm" onclick="saveNewCat()">Créer</button>
+    </div>
+  </div>
+</div>
+
+<!-- Import -->
+<div class="overlay hidden" id="importOverlay" onclick="closeImport(event)">
+  <div class="sheet" onclick="event.stopPropagation()">
+    <div class="sheet-handle"></div>
+    <h2 class="sheet-title">Charger une sauvegarde</h2>
+    <div style="background:var(--s3);border:2px dashed var(--b3);border-radius:var(--r3);padding:24px;text-align:center;margin-bottom:16px;cursor:pointer;" onclick="document.getElementById('fileIn').click()">
+      <div style="font-size:28px;margin-bottom:8px">📂</div>
+      <div style="font-size:13px;font-weight:600;color:var(--t2);margin-bottom:3px">Sélectionner le fichier .json</div>
+      <div style="font-size:11px;color:var(--t3)">Exporté depuis NeuAutoStock</div>
+    </div>
+    <input type="file" id="fileIn" accept=".json" style="display:none" onchange="loadFile(event)">
+    <div style="text-align:center;font-size:11px;color:var(--t3);margin-bottom:10px">— ou coller le JSON —</div>
+    <textarea class="field-textarea" id="importTxt" placeholder="Coller ici…" style="height:100px;font-size:12px;font-family:var(--mono)"></textarea>
+    <div class="sheet-btns">
+      <button class="sheet-btn cancel" onclick="closeImport()">Annuler</button>
+      <button class="sheet-btn confirm" onclick="doImport()">Charger</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ════════════════════════════════════════════════
+// STORAGE ENGINE — IndexedDB → localStorage → RAM
+// ════════════════════════════════════════════════
+const DB_NAME = 'NeuAS_v2', DB_VER = 1;
+let _db = null, _engine = 'ram';
+
+function _openDB() {
+  return new Promise((res, rej) => {
+    if (!window.indexedDB) return rej();
+    const r = indexedDB.open(DB_NAME, DB_VER);
+    r.onupgradeneeded = e => {
+      const db = e.target.result;
+      if (!db.objectStoreNames.contains('items')) db.createObjectStore('items', {keyPath:'id'});
+      if (!db.objectStoreNames.contains('cats')) db.createObjectStore('cats', {keyPath:'id'});
+      if (!db.objectStoreNames.contains('meta')) db.createObjectStore('meta', {keyPath:'key'});
+    };
+    r.onsuccess = e => { _db = e.target.result; res(_db); };
+    r.onerror = () => rej();
+  });
+}
+function _idbGetAll(store) {
+  return new Promise((res,rej) => {
+    const r = _db.transaction(store,'readonly').objectStore(store).getAll();
+    r.onsuccess = () => res(r.result || []);
+    r.onerror = () => rej();
+  });
+}
+function _idbPutAll(store, data) {
+  return new Promise((res,rej) => {
+    const tx = _db.transaction(store,'readwrite');
+    const st = tx.objectStore(store);
+    st.clear();
+    data.forEach(d => st.put(d));
+    tx.oncomplete = () => res();
+    tx.onerror = () => rej();
+  });
+}
+function _idbGet(store, key) {
+  return new Promise((res,rej) => {
+    const r = _db.transaction(store,'readonly').objectStore(store).get(key);
+    r.onsuccess = () => res(r.result);
+    r.onerror = () => rej();
+  });
+}
+function _lsGet(k) { try { const d = localStorage.getItem(k); return d ? JSON.parse(d) : null; } catch(e){ return null; } }
+function _lsSet(k,v) { try { localStorage.setItem(k, JSON.stringify(v)); return true; } catch(e){ return false; } }
+
+// ════════════════════════════════════════════════
+// DEFAULT DATA
+// ════════════════════════════════════════════════
+const DEFAULT_CATS = [
+  {id:'lame',      name:'Lames',        icon:'🔑', color:'#4488ff'},
+  {id:'telecommande', name:'Télécommandes', icon:'📡', color:'#30c060'},
+  {id:'transpondeur', name:'Transpondeurs', icon:'📟', color:'#d4a84b'},
+  {id:'lishi',     name:'Lishi',        icon:'🔧', color:'#f09020'},
+  {id:'pile',      name:'Piles',        icon:'🔋', color:'#9060f0'},
+];
+
+const DEFAULT_ITEMS = [
+  {id:1,ref:'HU66',nom:'Lame HU66',cat:'lame',compat:'VW Golf IV-VII, Polo, Passat, Audi A3/A4, Seat, Skoda',qte:0,seuil:3},
+  {id:2,ref:'HU100',nom:'Lame HU100',cat:'lame',compat:'VW Touareg, Porsche Cayenne, Phaeton',qte:0,seuil:2},
+  {id:3,ref:'HU162T',nom:'Lame HU162T laser',cat:'lame',compat:'Audi A3/A4/Q7 2016+, VW Golf VII/VIII',qte:0,seuil:2},
+  {id:4,ref:'VA6',nom:'Lame VA6',cat:'lame',compat:'Renault Clio III, Mégane II, Kangoo, Laguna',qte:0,seuil:3},
+  {id:5,ref:'VA2',nom:'Lame VA2 fraisée',cat:'lame',compat:'Renault Laguna II/III, Espace IV',qte:0,seuil:2},
+  {id:6,ref:'NE73',nom:'Lame NE73',cat:'lame',compat:'Renault Trafic II, Kangoo I, Master',qte:0,seuil:2},
+  {id:7,ref:'SX9',nom:'Lame SX9',cat:'lame',compat:'Peugeot 206/207/307/308, Citroën C3/C4, Berlingo',qte:0,seuil:3},
+  {id:8,ref:'NE78',nom:'Lame NE78',cat:'lame',compat:'Peugeot 106/206 avant 2002, Citroën Saxo',qte:0,seuil:2},
+  {id:9,ref:'HCA',nom:'Lame HCA / SIP22',cat:'lame',compat:'Peugeot 3008/5008/508, Citroën C5/C6, DS',qte:0,seuil:2},
+  {id:10,ref:'MIT11',nom:'Lame MIT11',cat:'lame',compat:'Citroën C1/C2/C3, Peugeot 107/207 2005-2012',qte:0,seuil:2},
+  {id:11,ref:'FO21',nom:'Lame FO21',cat:'lame',compat:'Ford Fiesta, Focus, C-Max, Fusion 2001-2012',qte:0,seuil:2},
+  {id:12,ref:'FO38',nom:'Lame FO38',cat:'lame',compat:'Ford Mondeo IV, S-Max, Galaxy 2007+',qte:0,seuil:2},
+  {id:13,ref:'YM28',nom:'Lame YM28',cat:'lame',compat:'Opel Astra, Corsa, Insignia, Zafira',qte:0,seuil:2},
+  {id:14,ref:'TOY43',nom:'Lame TOY43',cat:'lame',compat:'Toyota Yaris, Corolla, Auris, Avensis',qte:0,seuil:2},
+  {id:15,ref:'HU92',nom:'Lame HU92',cat:'lame',compat:'BMW Série 1/3/5/X3/X5 E46/E90/E60',qte:0,seuil:2},
+  {id:16,ref:'HU64',nom:'Lame HU64',cat:'lame',compat:'BMW F-Series, Série 1/2/3/4/5 2013+',qte:0,seuil:2},
+  {id:17,ref:'HU100R',nom:'Lame HU100R laser',cat:'lame',compat:'BMW G-Series 2018+, Mini F-Series',qte:0,seuil:2},
+  {id:18,ref:'NSN14',nom:'Lame NSN14',cat:'lame',compat:'Nissan Micra, Almera, Qashqai, Note',qte:0,seuil:2},
+  {id:19,ref:'HON66',nom:'Lame HON66',cat:'lame',compat:'Honda Civic, Jazz, CR-V, Accord 2002-2014',qte:0,seuil:2},
+  {id:20,ref:'KIA1',nom:'Lame Kia/Hyundai',cat:'lame',compat:"Kia Rio, Cee'd, Sportage, Hyundai i20/i30/Tucson",qte:0,seuil:2},
+  {id:21,ref:'MAZ24',nom:'Lame MAZ24',cat:'lame',compat:'Mazda 2/3/6, CX-5, MX-5',qte:0,seuil:2},
+  {id:22,ref:'VAC102',nom:'Lame Dacia',cat:'lame',compat:'Dacia Logan, Sandero, Duster, Dokker',qte:0,seuil:2},
+  {id:23,ref:'GT15',nom:'Lame GT15',cat:'lame',compat:'Alfa Romeo 147/156/159, Fiat Stilo, Bravo',qte:0,seuil:2},
+  {id:24,ref:'MIT8',nom:'Lame MIT8',cat:'lame',compat:'Mitsubishi Colt, Outlander, Pajero',qte:0,seuil:2},
+  {id:25,ref:'HU133R',nom:'Lame Suzuki',cat:'lame',compat:'Suzuki Swift, Vitara, Alto 2010+',qte:0,seuil:2},
+  {id:26,ref:'TRC-VAG-3B',nom:'Télécom. 3B VAG',cat:'telecommande',compat:'VW Golf IV/Polo/Bora — 433.92 MHz — ID48',qte:0,seuil:2},
+  {id:27,ref:'TRC-VAG-FLIP',nom:'Télécom. flip HU66',cat:'telecommande',compat:'VW Golf V-VII, Passat, Touran — lame HU66',qte:0,seuil:2},
+  {id:28,ref:'TRC-REN-CARTE',nom:'Télécom. carte Renault',cat:'telecommande',compat:'Laguna II/III, Espace IV, Vel Satis — 433 MHz',qte:0,seuil:2},
+  {id:29,ref:'TRC-REN-VA6',nom:'Télécom. 2B Renault',cat:'telecommande',compat:'Clio III, Kangoo II, Modus — 433 MHz FSK',qte:0,seuil:2},
+  {id:30,ref:'TRC-PSA-2B',nom:'Télécom. 2B PSA',cat:'telecommande',compat:'Peugeot 207/307/308, Citroën C3/C4 — 433 MHz',qte:0,seuil:2},
+  {id:31,ref:'TRC-PSA-3B',nom:'Télécom. 3B PSA',cat:'telecommande',compat:'Peugeot 3008/5008, Citroën C5 — 433 MHz',qte:0,seuil:2},
+  {id:32,ref:'TRC-FORD-3B',nom:'Télécom. 3B Ford',cat:'telecommande',compat:'Fiesta, Focus, C-Max 2007+ — 433 MHz FSK',qte:0,seuil:2},
+  {id:33,ref:'TRC-OPEL-2B',nom:'Télécom. 2B Opel',cat:'telecommande',compat:'Astra H, Corsa D, Zafira B — 433 MHz',qte:0,seuil:2},
+  {id:34,ref:'TRC-BMW-CAS',nom:'Télécom. BMW CAS',cat:'telecommande',compat:'BMW E-series 2004-2013',qte:0,seuil:2},
+  {id:35,ref:'TRC-MERCO-3B',nom:'Télécom. Mercedes',cat:'telecommande',compat:'Classe A/B/C/E W203/W211 — 433 MHz',qte:0,seuil:2},
+  {id:36,ref:'TRC-NIS-2B',nom:'Télécom. 2B Nissan',cat:'telecommande',compat:'Micra K12, Note, Almera — 433 MHz — ID46',qte:0,seuil:2},
+  {id:37,ref:'TRC-KIA-3B',nom:'Télécom. Kia/Hyundai',cat:'telecommande',compat:"Rio, Cee'd, i30, Tucson — 433 MHz — ID46",qte:0,seuil:2},
+  {id:38,ref:'ID11',nom:'Transpondeur ID11',cat:'transpondeur',compat:'Renault 1992-1998, Citroën, Peugeot ancien',qte:0,seuil:3},
+  {id:39,ref:'ID13',nom:'Transpondeur ID13',cat:'transpondeur',compat:'Peugeot 206 1998-2002, Citroën Saxo',qte:0,seuil:3},
+  {id:40,ref:'ID33',nom:'Transpondeur ID33 crypto',cat:'transpondeur',compat:'Renault Clio II, Kangoo, Mégane I',qte:0,seuil:3},
+  {id:41,ref:'ID46',nom:'Transpondeur ID46',cat:'transpondeur',compat:'Citroën, Peugeot, Renault, Nissan, VW 2000-2010',qte:0,seuil:3},
+  {id:42,ref:'ID48',nom:'Transpondeur ID48 crypto',cat:'transpondeur',compat:'VW, Audi, Seat, Skoda 2001-2018',qte:0,seuil:3},
+  {id:43,ref:'ID4D60',nom:'Transpondeur ID4D60',cat:'transpondeur',compat:'Toyota Yaris/Corolla/Avensis/RAV4 2005-2014',qte:0,seuil:3},
+  {id:44,ref:'ID4D63',nom:'Transpondeur ID4D63',cat:'transpondeur',compat:'Mazda, Subaru, Mitsubishi 2009+',qte:0,seuil:2},
+  {id:45,ref:'ID70',nom:'Transpondeur ID70 Ford',cat:'transpondeur',compat:'Ford Focus/Fiesta/Mondeo 2012+',qte:0,seuil:2},
+  {id:46,ref:'ID8E',nom:'Transpondeur ID8E Audi',cat:'transpondeur',compat:'Audi A4/A5/A6/Q5/Q7 2013+',qte:0,seuil:2},
+  {id:47,ref:'Megamos88',nom:'Megamos Crypto 88',cat:'transpondeur',compat:'VW Golf VII, Polo, Tiguan 2013+',qte:0,seuil:2},
+  {id:48,ref:'VVDI-SB',nom:'Super chip VVDI',cat:'transpondeur',compat:'Clonage universel ID46/48/4D/8E via VVDI',qte:0,seuil:2},
+  {id:49,ref:'Lishi HU66',nom:'Lishi 2en1 HU66',cat:'lishi',compat:'VW Golf IV-VII, Audi A3/A4, Seat, Skoda',qte:0,seuil:1},
+  {id:50,ref:'Lishi VA6',nom:'Lishi 2en1 VA6',cat:'lishi',compat:'Renault Clio III, Mégane II, Kangoo, Laguna',qte:0,seuil:1},
+  {id:51,ref:'Lishi SX9',nom:'Lishi 2en1 SX9',cat:'lishi',compat:'Peugeot 206/207/307/308, Citroën C3/C4',qte:0,seuil:1},
+  {id:52,ref:'Lishi HCA',nom:'Lishi 2en1 HCA',cat:'lishi',compat:'Peugeot 3008/5008/508, Citroën C5/C6, DS',qte:0,seuil:1},
+  {id:53,ref:'Lishi FO21',nom:'Lishi 2en1 FO21',cat:'lishi',compat:'Ford Fiesta, Focus, C-Max, Fusion 2001-2012',qte:0,seuil:1},
+  {id:54,ref:'Lishi YM28',nom:'Lishi 2en1 YM28',cat:'lishi',compat:'Opel Astra H/J, Corsa D, Insignia, Zafira',qte:0,seuil:1},
+  {id:55,ref:'Lishi HU92',nom:'Lishi 2en1 HU92',cat:'lishi',compat:'BMW Série 1/3/5/X3/X5 E-series',qte:0,seuil:1},
+  {id:56,ref:'Lishi HU64',nom:'Lishi 2en1 HU64',cat:'lishi',compat:'BMW F-Series, Série 1/2/3/4/5 2013+',qte:0,seuil:1},
+  {id:57,ref:'Lishi KIA1',nom:'Lishi 2en1 KIA1',cat:'lishi',compat:"Kia Rio, Cee'd, Sportage, Hyundai i20/i30",qte:0,seuil:1},
+  {id:58,ref:'Lishi TOY43',nom:'Lishi 2en1 TOY43',cat:'lishi',compat:'Toyota Yaris, Corolla, Auris, Avensis',qte:0,seuil:1},
+  {id:59,ref:'Lishi NSN14',nom:'Lishi 2en1 NSN14',cat:'lishi',compat:'Nissan Micra K12, Almera, Qashqai, Note',qte:0,seuil:1},
+  {id:60,ref:'Lishi HON66',nom:'Lishi 2en1 HON66',cat:'lishi',compat:'Honda Civic, Jazz, CR-V 2002-2014',qte:0,seuil:1},
+  {id:61,ref:'CR2032',nom:'Pile CR2032',cat:'pile',compat:'VW Golf IV/V/VI, Audi A3/A4, Seat, Skoda, Opel, Renault',qte:0,seuil:5},
+  {id:62,ref:'CR2025',nom:'Pile CR2025',cat:'pile',compat:'Toyota Yaris/Corolla/Auris, Honda Civic/Jazz, Mazda',qte:0,seuil:5},
+  {id:63,ref:'CR2016',nom:'Pile CR2016',cat:'pile',compat:'BMW E-series, Mini, Porsche Cayenne anciens',qte:0,seuil:5},
+  {id:64,ref:'CR1620',nom:'Pile CR1620',cat:'pile',compat:'Peugeot 206/207/307, Citroën C3/C4, Renault Clio III',qte:0,seuil:5},
+  {id:65,ref:'CR1616',nom:'Pile CR1616',cat:'pile',compat:'Nissan Micra K12, Note, Almera',qte:0,seuil:4},
+  {id:66,ref:'CR1632',nom:'Pile CR1632',cat:'pile',compat:'Ford Focus/Fiesta/Mondeo 2007+, C-Max, S-Max',qte:0,seuil:4},
+  {id:67,ref:'CR2450',nom:'Pile CR2450',cat:'pile',compat:'BMW F-Series 2013+, Mini F-Series — Smart key',qte:0,seuil:3},
+  {id:68,ref:'CR2354',nom:'Pile CR2354',cat:'pile',compat:'Mercedes Classe A/B/C/E W203/W211, Vito',qte:0,seuil:3},
+  {id:69,ref:'CR2430',nom:'Pile CR2430',cat:'pile',compat:'Kia, Hyundai — télécommandes 3B récentes',qte:0,seuil:3},
+  {id:70,ref:'CR2412',nom:'Pile CR2412',cat:'pile',compat:'Volkswagen Golf VII/VIII, Polo 2017+, Passat B8',qte:0,seuil:3},
+];
+
+// ════════════════════════════════════════════════
+// APP STATE
+// ════════════════════════════════════════════════
+let items = [], cats = [], currentTab = '', editId = null, quickCollapsed = false;
+let selectedColor = '#4488ff';
+
+const PALETTE = ['#4488ff','#30c060','#d4a84b','#f09020','#9060f0','#f04040','#20b8a0','#e060a0','#60b0f0','#c0c020'];
+
+// ════════════════════════════════════════════════
+// INIT
+// ════════════════════════════════════════════════
+async function init() {
+  // Open DB
+  try { await _openDB(); _engine = 'idb'; } catch(e) { _engine = 'ls'; }
+
+  // Load categories
+  let storedCats = null;
+  if (_engine === 'idb') {
+    try { storedCats = await _idbGetAll('cats'); } catch(e) {}
+  } else {
+    storedCats = _lsGet('neas_cats');
+  }
+  cats = (storedCats && storedCats.length) ? storedCats : JSON.parse(JSON.stringify(DEFAULT_CATS));
+
+  // Load items
+  let storedItems = null;
+  if (_engine === 'idb') {
+    try { storedItems = await _idbGetAll('items'); } catch(e) {}
+  } else {
+    storedItems = _lsGet('neas_items');
+  }
+  items = (storedItems && storedItems.length) ? storedItems : JSON.parse(JSON.stringify(DEFAULT_ITEMS));
+
+  // Save defaults if fresh
+  if (!storedCats || !storedCats.length) await saveAll();
+  if (!storedItems || !storedItems.length) await saveAll();
+
+  // iOS banner
+  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+  const isStandalone = window.navigator.standalone;
+  const bannerDismissed = _lsGet('neas_banner');
+  if (isIOS && !isStandalone && !bannerDismissed) {
+    document.getElementById('installBanner').classList.remove('hidden');
+  }
+
+  // Search
+  document.getElementById('searchInput').addEventListener('input', function() {
+    document.getElementById('searchWrap').classList.toggle('has-value', this.value.length > 0);
+    render();
+  });
+
+  render();
+}
+
+async function saveAll() {
+  if (_engine === 'idb') {
+    try {
+      await _idbPutAll('items', items);
+      await _idbPutAll('cats', cats);
+      return;
+    } catch(e) {}
+  }
+  _lsSet('neas_items', items);
+  _lsSet('neas_cats', cats);
+}
+
+function dismissBanner() {
+  _lsSet('neas_banner', true);
+  document.getElementById('installBanner').classList.add('hidden');
+}
+
+// ════════════════════════════════════════════════
+// RENDER
+// ════════════════════════════════════════════════
+function getCatById(id) { return cats.find(c => c.id === id); }
+
+function getCatStyle(catId) {
+  const cat = getCatById(catId);
+  if (!cat) return { bg: 'rgba(255,255,255,0.06)', color: '#9898a6' };
+  const hex = cat.color || '#4488ff';
+  return { bg: hex + '18', color: hex };
+}
+
+function renderTabs() {
+  const alertCount = items.filter(i => i.qte > 0 && i.qte <= i.seuil).length;
+  const allTab = `<button class="tab ${currentTab===''?'active':''}" onclick="setTab('')">
+    Tout <span class="badge">${items.length}</span></button>`;
+  const catTabs = cats.map(c => {
+    const count = items.filter(i => i.cat === c.id).length;
+    return `<button class="tab ${currentTab===c.id?'active':''}" onclick="setTab('${c.id}')">
+      ${c.icon} ${c.name} <span class="badge">${count}</span></button>`;
+  }).join('');
+  const alertTab = `<button class="tab tab-alert ${currentTab==='⚠'?'active':''}" onclick="setTab('⚠')">
+    ⚠ Alertes <span class="badge">${alertCount}</span></button>`;
+  document.getElementById('tabs').innerHTML = allTab + catTabs + alertTab;
+}
+
+function renderStats() {
+  const total = items.length;
+  const inStock = items.filter(i => i.qte > 0).length;
+  const alerts = items.filter(i => i.qte > 0 && i.qte <= i.seuil).length;
+  const empty = items.filter(i => i.qte === 0).length;
+  const totalQty = items.reduce((s,i) => s+i.qte, 0);
+
+  const stats = [
+    {v:total, l:'Réfs', cls:'neutral'},
+    {v:totalQty, l:'En stock', cls:''},
+    {v:inStock, l:'Dispo', cls:''},
+    {v:alerts, l:'Alertes', cls: alerts>0?'alert':''},
+    {v:empty, l:'Épuisés', cls: empty>0?'alert':''},
+    ...cats.map(c => ({v: items.filter(i=>i.cat===c.id).length, l: c.name, cls:'neutral'}))
+  ];
+
+  document.getElementById('statsStrip').innerHTML = stats.map(s =>
+    `<div class="stat-pill">
+      <div class="stat-val ${s.cls}">${s.v}</div>
+      <div class="stat-lbl">${s.l}</div>
+    </div>`
+  ).join('');
+}
+
+function renderQuick() {
+  const sorted = [...items].sort((a,b) => {
+    const aA = a.qte>0&&a.qte<=a.seuil, bA = b.qte>0&&b.qte<=b.seuil;
+    if(aA&&!bA)return -1; if(!aA&&bA)return 1;
+    if(a.qte===0&&b.qte>0)return 1; if(b.qte===0&&a.qte>0)return -1;
+    return a.ref.localeCompare(b.ref);
+  });
+  document.getElementById('quickGrid').innerHTML = sorted.map(item => {
+    const isLow = item.qte>0&&item.qte<=item.seuil, isZero = item.qte===0;
+    const cls = isZero?'empty':isLow?'low':'ok';
+    return `<div class="qref ${cls}" onclick="jumpTo(${item.id})" title="${item.nom}">
+      ${isLow?'<div class="qref-dot"></div>':''}
+      <div class="qref-ref">${item.ref}</div>
+      <div class="qref-qty">${item.qte}</div>
+    </div>`;
+  }).join('');
+}
+
+function renderMain() {
+  const q = document.getElementById('searchInput').value.toLowerCase().trim();
+  let filtered = items.filter(item => {
+    if (currentTab === '⚠') return item.qte > 0 && item.qte <= item.seuil;
+    if (currentTab && item.cat !== currentTab) return false;
+    if (!q) return true;
+    return (item.ref+' '+item.nom+' '+item.compat).toLowerCase().includes(q);
+  });
+
+  const container = document.getElementById('main');
+  if (!filtered.length) {
+    container.innerHTML = `<div class="cards"><div class="empty-state">
+      <div class="empty-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div>
+      <div class="empty-title">Aucun article</div>
+      <div class="empty-sub">Modifiez la recherche ou la catégorie</div>
+    </div></div>`; return;
+  }
+
+  let html = '';
+  const renderGroup = (groupItems) => `<div class="cards">${groupItems.map(renderCard).join('')}</div>`;
+
+  if (!currentTab || currentTab === '⚠') {
+    cats.forEach(cat => {
+      const gi = filtered.filter(i => i.cat === cat.id);
+      if (!gi.length) return;
+      html += `<div class="group-hdr">
+        <span class="group-hdr-label">${cat.icon} ${cat.name}</span>
+        <span class="group-hdr-count">${gi.length}</span>
+        <div class="group-hdr-line"></div>
+      </div>${renderGroup(gi)}`;
+    });
+    // Items with unknown/custom cats
+    const knownCatIds = cats.map(c => c.id);
+    const other = filtered.filter(i => !knownCatIds.includes(i.cat));
+    if (other.length) {
+      html += `<div class="group-hdr"><span class="group-hdr-label">Autres</span><span class="group-hdr-count">${other.length}</span><div class="group-hdr-line"></div></div>${renderGroup(other)}`;
+    }
+  } else {
+    html = renderGroup(filtered);
+  }
+  container.innerHTML = html;
+}
+
+function renderCard(item) {
+  const isLow = item.qte>0&&item.qte<=item.seuil, isZero = item.qte===0;
+  const cls = isZero?'empty':isLow?'low':'';
+  const qCls = isZero?'empty':isLow?'low':'ok';
+  const st = getCatStyle(item.cat);
+  return `<div class="card ${cls}" id="c${item.id}">
+    ${isLow?'<div class="card-alert-dot"></div>':''}
+    <div class="card-ref">${escHtml(item.ref)}</div>
+    <div class="card-name">${escHtml(item.nom)}</div>
+    <div class="card-compat">${escHtml(item.compat||'')}</div>
+    <div class="cat-tag" style="background:${st.bg};color:${st.color}">${getCatById(item.cat)?.icon||''}${getCatById(item.cat)?.name||item.cat}</div>
+    <div class="qty-block">
+      <div class="qty-btns">
+        <button class="qty-btn" onclick="adj(${item.id},-1)">−</button>
+        <span class="qty-num ${qCls}">${item.qte}</span>
+        <button class="qty-btn" onclick="adj(${item.id},+1)">+</button>
+      </div>
+    </div>
+    <div class="card-btns">
+      <button class="card-btn" onclick="openEditItem(${item.id})">✏ Modifier</button>
+      <button class="card-btn del" onclick="delItem(${item.id})">✕ Suppr.</button>
+    </div>
+  </div>`;
+}
+
+function escHtml(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+function render() { renderTabs(); renderStats(); renderQuick(); renderMain(); }
+
+// ════════════════════════════════════════════════
+// ACTIONS
+// ════════════════════════════════════════════════
+function setTab(t) { currentTab = t; render(); }
+function clearSearch() {
+  document.getElementById('searchInput').value = '';
+  document.getElementById('searchWrap').classList.remove('has-value');
+  render(); document.getElementById('searchInput').focus();
+}
+function toggleQuick() {
+  quickCollapsed = !quickCollapsed;
+  document.getElementById('quickSection').classList.toggle('collapsed', quickCollapsed);
+}
+function jumpTo(id) {
+  currentTab = ''; render();
+  setTimeout(() => {
+    const el = document.getElementById('c'+id);
+    if (el) { el.scrollIntoView({behavior:'smooth',block:'center'}); el.style.outline='2px solid var(--gold)'; setTimeout(()=>el.style.outline='',1400); }
+  }, 80);
+}
+
+async function adj(id, delta) {
+  const item = items.find(i=>i.id===id);
+  if (!item) return;
+  item.qte = Math.max(0, item.qte + delta);
+  await saveAll(); render();
+  toast((delta>0?'+ 1':'− 1')+' · '+item.ref, 'ok');
+}
+
+async function delItem(id) {
+  const item = items.find(i=>i.id===id);
+  if (!item) return;
+  if (!confirm(`Supprimer "${item.ref}" ?`)) return;
+  items = items.filter(i=>i.id!==id);
+  await saveAll(); render();
+  toast('Supprimé : '+item.ref, 'err');
+}
+
+// ════════════════════════════════════════════════
+// ITEM MODAL
+// ════════════════════════════════════════════════
+function buildCatSelect(selected) {
+  const sel = document.getElementById('fCat');
+  sel.innerHTML = cats.map(c => `<option value="${c.id}" ${c.id===selected?'selected':''}>${c.icon} ${c.name}</option>`).join('');
+}
+
+function openAddItem() {
+  editId = null;
+  document.getElementById('itemSheetTitle').textContent = 'Nouvel article';
+  document.getElementById('fRef').value = '';
+  document.getElementById('fName').value = '';
+  document.getElementById('fCompat').value = '';
+  document.getElementById('fQty').value = 1;
+  document.getElementById('fSeuil').value = 2;
+  buildCatSelect(cats[0]?.id || '');
+  document.getElementById('itemOverlay').classList.remove('hidden');
+}
+
+function openEditItem(id) {
+  const item = items.find(i=>i.id===id);
+  if (!item) return;
+  editId = id;
+  document.getElementById('itemSheetTitle').textContent = 'Modifier l\'article';
+  document.getElementById('fRef').value = item.ref;
+  document.getElementById('fName').value = item.nom;
+  document.getElementById('fCompat').value = item.compat||'';
+  document.getElementById('fQty').value = item.qte;
+  document.getElementById('fSeuil').value = item.seuil;
+  buildCatSelect(item.cat);
+  document.getElementById('itemOverlay').classList.remove('hidden');
+}
+
+function closeItemSheet(e) {
+  if (e && e.target !== e.currentTarget) return;
+  document.getElementById('itemOverlay').classList.add('hidden');
+}
+
+async function saveItem() {
+  const ref = document.getElementById('fRef').value.trim();
+  if (!ref) { toast('Référence obligatoire', 'err'); return; }
+  const data = {
+    id: editId || Date.now(),
+    ref,
+    nom: document.getElementById('fName').value.trim() || ref,
+    cat: document.getElementById('fCat').value,
+    compat: document.getElementById('fCompat').value.trim(),
+    qte: parseInt(document.getElementById('fQty').value)||0,
+    seuil: parseInt(document.getElementById('fSeuil').value)||0,
+  };
+  if (editId) { const i=items.findIndex(x=>x.id===editId); if(i!==-1)items[i]=data; }
+  else items.push(data);
+  await saveAll(); render(); closeItemSheet();
+  toast(editId?'Article mis à jour':'Article ajouté', 'ok');
+}
+
+// ════════════════════════════════════════════════
+// CATEGORY MANAGER
+// ════════════════════════════════════════════════
+function openCatManager() {
+  renderCatList();
+  document.getElementById('catOverlay').classList.remove('hidden');
+}
+function closeCatSheet(e) {
+  if (e && e.target !== e.currentTarget) return;
+  document.getElementById('catOverlay').classList.add('hidden');
+}
+function renderCatList() {
+  document.getElementById('catList').innerHTML = cats.map(c => {
+    const count = items.filter(i=>i.cat===c.id).length;
+    return `<div class="cat-list-item">
+      <div class="cat-list-dot" style="background:${c.color}"></div>
+      <div class="cat-list-icon">${c.icon}</div>
+      <div class="cat-list-name">${escHtml(c.name)}</div>
+      <div class="cat-list-count">${count} art.</div>
+      <button class="cat-del-btn" onclick="delCat('${c.id}')">✕</button>
+    </div>`;
+  }).join('') || '<div style="color:var(--t3);text-align:center;padding:20px;font-size:13px">Aucune catégorie</div>';
+}
+
+async function delCat(id) {
+  const cat = cats.find(c=>c.id===id);
+  const count = items.filter(i=>i.cat===id).length;
+  const msg = count > 0
+    ? `Supprimer "${cat?.name}" ? Les ${count} articles associés perdront leur catégorie.`
+    : `Supprimer la catégorie "${cat?.name}" ?`;
+  if (!confirm(msg)) return;
+  cats = cats.filter(c=>c.id!==id);
+  await saveAll(); render(); renderCatList();
+  toast('Catégorie supprimée', 'err');
+}
+
+function openAddCat() {
+  document.getElementById('catName').value = '';
+  document.getElementById('catIcon').value = '';
+  selectedColor = PALETTE[0];
+  // Build color picker
+  document.getElementById('colorPicker').innerHTML = PALETTE.map(c =>
+    `<div class="color-dot ${c===selectedColor?'selected':''}" style="background:${c}" onclick="selectColor('${c}')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+    </div>`
+  ).join('');
+  document.getElementById('addCatOverlay').classList.remove('hidden');
+}
+function closeAddCat(e) {
+  if (e && e.target !== e.currentTarget) return;
+  document.getElementById('addCatOverlay').classList.add('hidden');
+}
+function selectColor(c) {
+  selectedColor = c;
+  document.querySelectorAll('.color-dot').forEach(d => {
+    d.classList.toggle('selected', d.style.background === c);
+  });
+}
+
+async function saveNewCat() {
+  const name = document.getElementById('catName').value.trim();
+  if (!name) { toast('Nom obligatoire', 'err'); return; }
+  const icon = document.getElementById('catIcon').value.trim() || '📦';
+  const id = 'cat_' + Date.now();
+  cats.push({ id, name, icon, color: selectedColor });
+  await saveAll(); render(); closeAddCat();
+  renderCatList();
+  toast('Catégorie "'+name+'" créée', 'ok');
+}
+
+// ════════════════════════════════════════════════
+// EXPORT / IMPORT
+// ════════════════════════════════════════════════
+function exportData() {
+  const data = { version:2, date: new Date().toISOString(), cats, items };
+  const blob = new Blob([JSON.stringify(data, null, 2)], {type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href=url; a.download='NeuAutoStock_'+new Date().toISOString().slice(0,10)+'.json';
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  toast('Sauvegarde téléchargée', 'ok');
+}
+function openImport() {
+  document.getElementById('importTxt').value='';
+  document.getElementById('fileIn').value='';
+  document.getElementById('importOverlay').classList.remove('hidden');
+}
+function closeImport(e) {
+  if (e && e.target !== e.currentTarget) return;
+  document.getElementById('importOverlay').classList.add('hidden');
+}
+function loadFile(ev) {
+  const f=ev.target.files[0]; if(!f)return;
+  const r=new FileReader(); r.onload=e=>{document.getElementById('importTxt').value=e.target.result;}; r.readAsText(f);
+}
+async function doImport() {
+  const raw = document.getElementById('importTxt').value.trim();
+  if (!raw) { toast('Aucune donnée', 'err'); return; }
+  try {
+    const p = JSON.parse(raw);
+    if (p.items) items = p.items;
+    else if (Array.isArray(p)) items = p;
+    else throw new Error();
+    if (p.cats) cats = p.cats;
+    await saveAll(); closeImport(); render();
+    toast(items.length+' articles chargés', 'ok');
+  } catch(e) { toast('Fichier invalide', 'err'); }
+}
+
+// ════════════════════════════════════════════════
+// TOAST
+// ════════════════════════════════════════════════
+let _toastT;
+function toast(msg, type='info') {
+  const el = document.getElementById('toast');
+  el.textContent = msg; el.className = 'toast show ' + type;
+  clearTimeout(_toastT);
+  _toastT = setTimeout(() => el.classList.remove('show'), 2200);
+}
+
+// ════════════════════════════════════════════════
+// SERVICE WORKER — sauvegarde offline / PWA
+// ════════════════════════════════════════════════
+if ('serviceWorker' in navigator) {
+  const SW_SRC = `
+const CACHE = 'neas-v1';
+self.addEventListener('install', e => {
+  self.skipWaiting();
+});
+self.addEventListener('activate', e => {
+  e.waitUntil(clients.claim());
+});
+self.addEventListener('fetch', e => {
+  // Cache-first pour les ressources locales
+  if (e.request.url === location.href || e.request.mode === 'navigate') {
+    e.respondWith(
+      caches.open(CACHE).then(cache =>
+        cache.match(e.request).then(cached => {
+          const fresh = fetch(e.request).then(res => { cache.put(e.request, res.clone()); return res; });
+          return cached || fresh;
+        })
+      )
+    );
+  }
+});
+`;
+  const swBlob = new Blob([SW_SRC], {type:'text/javascript'});
+  const swUrl = URL.createObjectURL(swBlob);
+  navigator.serviceWorker.register(swUrl).catch(()=>{});
+}
+
+// GO
+init();
+</script>
+</body>
+</html>
